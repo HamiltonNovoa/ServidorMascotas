@@ -1,6 +1,10 @@
 const router = require('express').Router();
 const Mascota = require('./schema/Mascota');
+const Usuario = require('./schema/Usuario');
 
+/**
+* Rutas para mascotas 
+*/
 // Busca todas las mascotas de la DB.
 router.get('/mascotas', function (request, response) {
     Mascota.find()
@@ -72,4 +76,25 @@ router.delete('/mascota/:id', function (request, response) {
         });
 });
 
+/**
+* Rutas para usuario
+*/
+// Crea un usuario en la DB con la información del body de la petición.
+router.post('/usuario', function (request, response) {
+    const body = request.body;
+
+    new Usuario(body).save()
+        .then(function (data) {
+            response.status(201).json({
+                error: '',
+                body: {
+                    data: data,
+                    mensaje: 'usuario creado exitosamente.'
+                }
+            });
+        })
+        .catch(function () {
+            response.status(500).json({ error: 'Error al crear mascota, intente nuevamente.', body: '' });
+        });
+});
 module.exports = router;
