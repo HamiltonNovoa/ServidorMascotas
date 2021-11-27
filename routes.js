@@ -7,7 +7,7 @@ const Usuario = require('./schema/Usuario');
 */
 // Busca todas las mascotas de la DB.
 router.get('/mascotas', function (request, response) {
-    Mascota.find()
+    Mascota.find({ habilitado: 0 })
         .then(function (data) {
             response.status(201).json({
                 error: '',
@@ -76,6 +76,22 @@ router.delete('/mascota/:id', function (request, response) {
         });
 });
 
+// Actualiza habilitado y usuario par adopción.
+router.put('/mascota-adoptar', function (request, response) {
+    const body = request.body;
+
+    Mascota.findOneAndUpdate({ _id: body.idMascota, habilitado: 0 }, { $set: { habilitado: 1, usuarioAdopcion: body.idUsuario } })
+        .then(function (data) {
+            response.status(201).json({
+                error: '',
+                update: data ? true : false
+            });
+        })
+        .catch(function () {
+            response.status(500).json({ error: 'Error al crear mascota, intente nuevamente.', body: '' });
+        });
+});
+
 /**
 * Rutas para usuario
 */
@@ -97,4 +113,24 @@ router.post('/usuario', function (request, response) {
             response.status(500).json({ error: 'Error al crear mascota, intente nuevamente.', body: '' });
         });
 });
+
+// 
+router.put('/usuario', function (request, response) {
+    const body = request.body;
+
+    Usuario.findOne(body)
+        .then(function (data) {
+            if (data) { delete data.contrasena; }
+
+            response.status(201).json({
+                error: '',
+                login: data ? true : false,
+                body: data || {}
+            });
+        })
+        .catch(function () {
+            response.status(500).json({ error: 'Error al crear mascota, intente nuevamente.', body: '' });
+        });
+});
+
 module.exports = router;

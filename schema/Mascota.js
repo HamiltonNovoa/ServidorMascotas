@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, SchemaTypes } = require('mongoose');
 
 const Mascota = new Schema({
     nombre: String,
@@ -10,7 +10,13 @@ const Mascota = new Schema({
     fechaNacimiento: Date,
     peso: Number,
     sexo: String,
-    entregan: [Object]
+    entregan: [Object],
+    habilitado: Number, // 0: si está habilitado, 1: esta en proceso de adopcion, 2: ya está adoptado
+    usuarioAdopcion: {
+        type: SchemaTypes.ObjectId,
+        ref: 'Usuario'
+    }
+
 }, { timestamps: true, versionKey: false });
 
 module.exports = model('Mascota', Mascota);
